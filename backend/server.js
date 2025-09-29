@@ -114,7 +114,120 @@ const authMiddleware = async (req, res, next) => {
 };
 
 
+app.get('/api/users/me', authMiddleware, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        bio: true,
+        skillsOffered: true,
+        skillsWanted: true
+      }
+    });
 
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+
+    const userData = {
+      ...user,
+      skillsOffered: user.skillsOffered ? JSON.parse(user.skillsOffered) : [],
+      skillsWanted: user.skillsWanted ? JSON.parse(user.skillsWanted) : []
+    };
+
+    res.json(userData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to get profile' });
+  }
+});
+
+
+app.put('/api/users/me', authMiddleware, async (req, res) => {
+  try {
+    const { name, bio, skillsOffered, skillsWanted } = req.body;
+
+    const user = await prisma.user.update({
+      where: { id: req.userId },
+      data: {
+        name,
+        bio: bio || null,
+        skillsOffered: JSON.stringify(skillsOffered || []),
+        skillsWanted: JSON.stringify(skillsWanted || [])
+      }
+    });
+
+    res.json({ message: 'Profile updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+
+app.get('/api/users/browse', authMiddleware, async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        id: { not: req.userId }
+      },
+      select: {
+        id: true,
+        name: true,
+        bio: true,
+        skillsOffered: true,
+        skillsWanted: true
+      }
+    });
+
+    const parsedUsers = users.map(user => ({
+      ...user,
+      skillsOffered: user.skillsOffered ? JSON.parse(user.skillsOffered) : [],
+      skillsWanted: user.skillsWanted ? JSON.parse(user.skillsWanted) : []
+    }));
+
+    res.json(parsedUsers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to browse users' });
+  }
+});
+
+
+app.get('/api/users/:id', authMiddleware, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(req.params.id) },
+      select: {
+        id: true,
+        name: true,
+        bio: true,
+        skillsOffered: true,
+        skillsWanted: true
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+
+    const userData = {
+      ...user,
+      skillsOffered: user.skillsOffered ? JSON.parse(user.skillsOffered) : [],
+      skillsWanted: user.skillsWanted ? JSON.parse(user.skillsWanted) : []
+    };
+
+    res.json(userData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to get user' });
+  }
+});
 
 
 const PORT = process.env.PORT || 3000;
