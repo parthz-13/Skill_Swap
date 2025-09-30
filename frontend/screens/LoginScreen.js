@@ -10,17 +10,17 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Error", "Please fill all fields");
+      Alert.alert('Error', 'Please fill all fields');
       return;
     }
 
     try {
       setLoading(true);
       const response = await authAPI.login({ email, password });
-      await AsyncStorage.setItem("token", response.data.token);
-      navigation.replace("Browse");
+      await AsyncStorage.setItem('token', response.data.token);
+      onLogin(); // Call this instead of navigation.replace
     } catch (error) {
-      Alert.alert("Error", error.response?.data?.error || "Login failed");
+      Alert.alert('Error', error.response?.data?.error || 'Login failed');
     } finally {
       setLoading(false);
     }
