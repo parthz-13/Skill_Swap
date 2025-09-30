@@ -1,40 +1,49 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from 'react-native';
-import { authAPI } from '../services/api';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Alert,
+  ScrollView,
+} from "react-native";
+import { authAPI } from "../services/api";
 
 export default function RegisterScreen({ navigation }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
-      Alert.alert('Error', 'Please fill all fields');
+      Alert.alert("Error", "Please fill all fields");
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Alert.alert("Error", "Passwords do not match");
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
+      Alert.alert("Error", "Password must be at least 6 characters");
       return;
     }
 
     try {
       setLoading(true);
       await authAPI.register({ name, email, password });
-      Alert.alert(
-        'Success', 
-        'Account created! Please login.',
-        [{ text: 'OK', onPress: () => navigation.goBack() }]
-      );
+      Alert.alert("Success", "Account created! Please login.", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
     } catch (error) {
-      Alert.alert('Error', error.response?.data?.error || 'Registration failed');
+      Alert.alert(
+        "Error",
+        error.response?.data?.error || "Registration failed"
+      );
     } finally {
       setLoading(false);
     }
@@ -44,7 +53,7 @@ export default function RegisterScreen({ navigation }) {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Create Account</Text>
       <Text style={styles.subtitle}>Join the Skill Swap community</Text>
-      
+
       <TextInput
         style={styles.input}
         placeholder="Full Name"
@@ -73,12 +82,12 @@ export default function RegisterScreen({ navigation }) {
         onChangeText={setConfirmPassword}
         secureTextEntry
       />
-      
+
       <View style={styles.buttonContainer}>
-        <Button 
-          title={loading ? "Creating Account..." : "Register"} 
-          onPress={handleRegister} 
-          disabled={loading} 
+        <Button
+          title={loading ? "Creating Account..." : "Register"}
+          onPress={handleRegister}
+          disabled={loading}
         />
       </View>
     </ScrollView>
@@ -86,32 +95,32 @@ export default function RegisterScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
+  container: {
+    flex: 1,
     padding: 20,
-    backgroundColor: '#fff'
+    backgroundColor: "#fff",
   },
-  title: { 
-    fontSize: 32, 
-    fontWeight: 'bold', 
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
     marginBottom: 10,
-    marginTop: 20
+    marginTop: 20,
   },
   subtitle: {
     fontSize: 16,
-    color: '#6c757d',
-    marginBottom: 30
+    color: "#6c757d",
+    marginBottom: 30,
   },
-  input: { 
-    borderWidth: 1, 
-    borderColor: '#ddd', 
-    padding: 15, 
-    marginBottom: 15, 
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    padding: 15,
+    marginBottom: 15,
     borderRadius: 8,
-    fontSize: 16
+    fontSize: 16,
   },
   buttonContainer: {
     marginTop: 10,
-    marginBottom: 30
-  }
+    marginBottom: 30,
+  },
 });
