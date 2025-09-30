@@ -82,7 +82,6 @@ export default function BrowseScreen({ navigation }) {
           title="My Profile"
           onPress={() => navigation.navigate("Profile")}
         />
-        <Button title="Logout" onPress={handleLogout} color="#dc3545" />
       </View>
 
       {loading ? (
