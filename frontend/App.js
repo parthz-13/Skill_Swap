@@ -7,7 +7,7 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import EditProfileScreen from "./screens/EditProfileScreen";
-// import BrowseScreen from "./screens/BrowseScreen";
+import BrowseScreen from "./screens/BrowseScreen";
 
 const Stack = createStackNavigator();
 
