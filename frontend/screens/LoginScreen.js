@@ -3,28 +3,32 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authAPI } from "../services/api";
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation, onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+const handleLogin = async () => {
+  if (!email || !password) {
+    Alert.alert('Error', 'Please fill all fields');
+    return;
+  }
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please fill all fields');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const response = await authAPI.login({ email, password });
-      await AsyncStorage.setItem('token', response.data.token);
-      onLogin(); // Call this instead of navigation.replace
-    } catch (error) {
-      Alert.alert('Error', error.response?.data?.error || 'Login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+    console.log('Attempting login with:', email); 
+    console.log('API URL:', 'check api.js file'); 
+    const response = await authAPI.login({ email, password });
+    console.log('Login response:', response.data); 
+    await AsyncStorage.setItem('token', response.data.token);
+    onLogin();
+  } catch (error) {
+    console.log('Login error:', error); 
+    console.log('Error response:', error.response?.data); 
+    Alert.alert('Error', error.response?.data?.error || 'Login failed');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <View style={styles.container}>
@@ -85,7 +89,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 5,
+    margin: 50,
+    textAlign : 'center'
   },
   email: {
     color: "#6c757d",
@@ -133,4 +138,15 @@ const styles = StyleSheet.create({
   buttonContainer: {
     margin: 20,
   },
+    input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    padding: 15,
+    marginBottom: 15,
+    borderRadius: 8,
+    fontSize: 16,
+  },
+  subtitle : {
+    marginBottom : 10
+  }
 });

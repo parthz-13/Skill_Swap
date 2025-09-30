@@ -11,7 +11,7 @@ import {
 import { userAPI } from "../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function BrowseScreen({ navigation }) {
+export default function BrowseScreen({ navigation, onLogout }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -37,9 +37,9 @@ export default function BrowseScreen({ navigation }) {
     loadUsers();
   };
 
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem("token");
-    navigation.replace("Login");
+    const handleLogout = async () => {
+    await AsyncStorage.removeItem('token');
+    onLogout(); 
   };
 
   const renderUser = ({ item }) => (
@@ -82,6 +82,8 @@ export default function BrowseScreen({ navigation }) {
           title="My Profile"
           onPress={() => navigation.navigate("Profile")}
         />
+        <Button title="Logout" onPress={handleLogout} color="#dc3545" />
+
       </View>
 
       {loading ? (
